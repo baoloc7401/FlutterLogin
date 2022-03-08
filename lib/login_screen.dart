@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loginflutter/constants.dart';
 import 'package:loginflutter/home_screen.dart';
+import 'package:loginflutter/listviewTodo.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class LoginScreen extends StatelessWidget {
   void _navigateToNextScreen(BuildContext context) {
     if (signIn(userTextController.text, passTextController.text)) {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const HomeScreen()));
+          .push(MaterialPageRoute(builder: (context) => const listViewTodo()));
     } else {
       showDialog<String>(
         context: context,
