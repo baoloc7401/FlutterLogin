@@ -6,7 +6,7 @@ import 'package:loginflutter/listviewTodo.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
   bool signIn(String user, String pass) {
-    return user == "admin" && pass == "123";
+    return user == "1" && pass == "1";
   }
 
   void _navigateToNextScreen(BuildContext context) {
@@ -91,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                                 style: TextStyle(color: Colors.blueAccent),
                               ),
                               content: const Text(
-                                  'The username is admin and the password is 123.'),
+                                  'The username is 1 and the password is 1.'),
                               actions: <Widget>[
                                 TextButton(
                                   onPressed: () => Navigator.pop(context, 'OK'),
@@ -100,8 +100,8 @@ class LoginScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          userTextController.text = 'admin',
-                          passTextController.text = '123'
+                          userTextController.text = '1',
+                          passTextController.text = '1'
                         },
                         child: const Text(
                           "Forgot Password?",

@@ -3,9 +3,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:loginflutter/Store/todo.dart';
 import 'package:loginflutter/Store/todo_list.dart';
 import 'package:mobx/mobx.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 class listViewTodo extends StatefulWidget {
   const listViewTodo({Key? key}) : super(key: key);
@@ -15,6 +15,7 @@ class listViewTodo extends StatefulWidget {
 }
 
 class _listViewTodoState extends State<listViewTodo> {
+  bool temp = false;
   @observable
   // ignore: non_constant_identifier_names
   Todo_List? todo_list;
@@ -22,17 +23,23 @@ class _listViewTodoState extends State<listViewTodo> {
   Widget build(BuildContext context) {
     todo_list = Todo_List();
     todo_list?.initTodos();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Demo Home Page'),
-      ),
-      body: Center(child: _listViewBuilder()),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => addDialog(),
-        tooltip: 'Add more tasks',
-        child: const Icon(Icons.add),
-      ),
-    );
+    return MaterialApp(
+        title: 'Flutter Demo Home Page',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Flutter Demo Home Page'),
+          ),
+          body: Center(child: _listViewBuilder()),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => inputItemDialog("Add", done: false),
+            tooltip: 'Add more tasks',
+            child: const Icon(Icons.add),
+          ),
+        ));
   }
 
   //----LIST VIEW----//
@@ -50,42 +57,85 @@ class _listViewTodoState extends State<listViewTodo> {
   }
 
   //----TO DO ITEMS----//
-
   Widget _todoItemsBuilder(int index) {
-    return ListTile(
-      leading: const Icon(Icons.done),
-      title: Text(
-        todo_list!.todos[index].description,
-        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      ),
-      subtitle: Text(
-        todo_list!.todos[index].description,
-      ),
-      trailing: const Icon(Icons.navigate_next),
-      onLongPress: () => delDialog(index),
-    );
+    return Observer(
+        builder: (context) => ListTile(
+              leading: todo_list!.todos[index].done
+                  ? const Icon(Icons.done)
+                  : const Icon(Icons.close),
+              title: Text(
+                todo_list!.todos[index].description,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                todo_list!.todos[index].description,
+              ),
+              trailing: const Icon(Icons.navigate_next),
+              onLongPress: () => delDialog(index),
+              onTap: () => inputItemDialog("Update",
+                  done: todo_list!.todos[index].done,
+                  desc: todo_list!.todos[index].description,
+                  index: index),
+            ));
   }
 
-  //----ADD DIALOG----//
+  //----INPUT ITEMS DIALOG----//
 
   final taskDescTextController = TextEditingController();
-
-  addDialog() async {
-    taskDescTextController.clear();
-    await showDialog<String>(
+  @action
+  inputItemDialog(String type,
+      {bool done = false, String desc = "", int index = -1}) {
+    taskDescTextController.text = desc;
+    showDialog<void>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         contentPadding: const EdgeInsets.all(16.0),
-        content: Row(
-          children: <Widget>[
-            Expanded(
-                child: TextField(
-                    controller: taskDescTextController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        labelText: 'Task Description: ',
-                        hintText: 'eg. Brush your teeth'))),
-          ],
+        title: SizedBox(
+            width: double.infinity,
+            child: Text(
+              type + " Item",
+              textAlign: TextAlign.center,
+            )),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                        controller: taskDescTextController,
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                            labelText: 'Task Description: ',
+                            hintText: 'eg. Brush your teeth')),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Status: ",
+                          textAlign: TextAlign.center,
+                        ),
+                        FlutterSwitch(
+                          value: done,
+                          showOnOff: true,
+                          onToggle: (value) => {
+                            setState(() {
+                              done = value;
+                            })
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
         actions: <Widget>[
           TextButton(
@@ -96,9 +146,12 @@ class _listViewTodoState extends State<listViewTodo> {
             onPressed: () => {
               Navigator.pop(context, 'Yes'),
               if (taskDescTextController.text.isNotEmpty)
-                todo_list!.addTodo(taskDescTextController.text)
+                (type == "Add")
+                    ? todo_list!.addTodo(taskDescTextController.text, done)
+                    : todo_list!
+                        .updateTodo(index, taskDescTextController.text, done)
             },
-            child: const Text('Yes'),
+            child: const Text('Submit'),
           ),
         ],
       ),
@@ -107,7 +160,7 @@ class _listViewTodoState extends State<listViewTodo> {
 
   //----DELETE DIALOG----//
 
-  bool delDialog(int index) {
+  void delDialog(int index) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -129,6 +182,5 @@ class _listViewTodoState extends State<listViewTodo> {
         ],
       ),
     );
-    return true;
   }
 }

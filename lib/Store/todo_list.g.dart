@@ -64,11 +64,22 @@ mixin _$Todo_List on _Todo_List, Store {
   }
 
   @override
-  dynamic addTodo(String des) {
+  dynamic addTodo(String des, bool done) {
     final _$actionInfo =
         _$_Todo_ListActionController.startAction(name: '_Todo_List.addTodo');
     try {
-      return super.addTodo(des);
+      return super.addTodo(des, done);
+    } finally {
+      _$_Todo_ListActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic updateTodo(int index, String des, bool done) {
+    final _$actionInfo =
+        _$_Todo_ListActionController.startAction(name: '_Todo_List.updateTodo');
+    try {
+      return super.updateTodo(index, des, done);
     } finally {
       _$_Todo_ListActionController.endAction(_$actionInfo);
     }

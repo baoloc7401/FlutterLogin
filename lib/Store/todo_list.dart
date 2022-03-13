@@ -26,7 +26,13 @@ abstract class _Todo_List with Store {
   }
 
   @action
-  addTodo(String des) {
-    todos.add(Todo(des));
+  addTodo(String des, bool done) {
+    todos.add(Todo(des, done: done));
+  }
+
+  @action
+  updateTodo(int index, String des, bool done) {
+    todos[index].description = des;
+    todos[index].done = done;
   }
 }
