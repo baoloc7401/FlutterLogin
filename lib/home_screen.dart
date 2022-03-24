@@ -1,54 +1,52 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:loginflutter/attendance_screen.dart';
 import 'package:loginflutter/constants.dart';
+import 'package:loginflutter/listviewTodo.dart';
+import 'package:loginflutter/model/loginConfig.dart';
 import 'package:mobx/mobx.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final LoginConfig login_config;
+  const HomeScreen(this.login_config, {Key? key}) : super(key: key);
   @override
   State<HomeScreen> createState() => _HomeScreen();
 }
 
 class _HomeScreen extends State<HomeScreen> {
   @observable
-  int page = 0;
-
+  int curIndex = 0;
+  late var screens = [
+    AttendanceScreen(widget.login_config),
+    listViewTodo(widget.login_config),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vitalify Home Screen'),
-        backgroundColor: fPrimaryColor,
-        foregroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You are on screen number: ',
-            ),
-            Text(
-              '$page',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        children: screens,
+        index: curIndex,
       ),
       bottomNavigationBar: CurvedNavigationBar(
         color: fPrimaryColor,
         buttonBackgroundColor: fSecondaryColor,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        height: 60,
         items: const <Widget>[
-          Icon(Icons.home, size: 30),
-          Icon(Icons.list, size: 30),
-          Icon(Icons.add, size: 30),
-          Icon(Icons.compare_arrows, size: 30),
-          Icon(Icons.settings, size: 30),
+          Icon(
+            Icons.home,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.list,
+            color: Colors.white,
+          ),
         ],
         onTap: (index) {
           setState(() {
-            page = index;
+            curIndex = index;
           });
         },
       ),

@@ -1,14 +1,16 @@
 // ignore: file_names
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loginflutter/Store/todo_list.dart';
+import 'package:loginflutter/model/loginConfig.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 class listViewTodo extends StatefulWidget {
-  const listViewTodo({Key? key}) : super(key: key);
+  final LoginConfig login_config;
+  const listViewTodo(this.login_config, {Key? key}) : super(key: key);
 
   @override
   State<listViewTodo> createState() => _listViewTodoState();
@@ -16,30 +18,25 @@ class listViewTodo extends StatefulWidget {
 
 class _listViewTodoState extends State<listViewTodo> {
   bool temp = false;
+  static String title = "Todo Demo";
   @observable
-  // ignore: non_constant_identifier_names
   Todo_List? todo_list;
   @override
   Widget build(BuildContext context) {
     todo_list = Todo_List();
     todo_list?.initTodos();
-    return MaterialApp(
-        title: 'Flutter Demo Home Page',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Flutter Demo Home Page'),
-          ),
-          body: Center(child: _listViewBuilder()),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => inputItemDialog("Add", done: false),
-            tooltip: 'Add more tasks',
-            child: const Icon(Icons.add),
-          ),
-        ));
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Center(child: Text("Todo Screen")),
+      ),
+      body: Center(child: _listViewBuilder()),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => inputItemDialog("Add", done: false),
+        tooltip: 'Add more tasks',
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 
   //----LIST VIEW----//
