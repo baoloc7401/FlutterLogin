@@ -4,21 +4,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loginflutter/Store/todo_list.dart';
-import 'package:loginflutter/model/loginConfig.dart';
+import 'package:loginflutter/models/loginInfo.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
-class listViewTodo extends StatefulWidget {
-  final LoginConfig login_config;
-  const listViewTodo(this.login_config, {Key? key}) : super(key: key);
+class listViewTodo_screen extends StatefulWidget {
+  final LoginInfo login_info;
+  const listViewTodo_screen(this.login_info, {Key? key}) : super(key: key);
 
   @override
-  State<listViewTodo> createState() => _listViewTodoState();
+  State<listViewTodo_screen> createState() => _listViewTodo_screenState();
 }
 
-class _listViewTodoState extends State<listViewTodo> {
+class _listViewTodo_screenState extends State<listViewTodo_screen> {
   bool temp = false;
-  static String title = "Todo Demo";
   @observable
   Todo_List? todo_list;
   @override

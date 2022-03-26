@@ -1,12 +1,12 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:loginflutter/constants.dart';
-import 'package:loginflutter/model/loginConfig.dart';
+import 'package:loginflutter/constants/colors.dart';
+import 'package:loginflutter/models/loginInfo.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  LoginConfig loginConfig;
-  AttendanceScreen(this.loginConfig, {Key? key}) : super(key: key);
+  LoginInfo login_info;
+  AttendanceScreen(this.login_info, {Key? key}) : super(key: key);
 
   @override
   State<AttendanceScreen> createState() => _AttendanceScreenState();
