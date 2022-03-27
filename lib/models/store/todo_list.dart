@@ -1,7 +1,7 @@
 // ignore_for_file: camel_case_types
 
+import 'package:loginflutter/store/todo.dart';
 import 'package:mobx/mobx.dart';
-import 'package:loginflutter/Store/todo.dart';
 part 'todo_list.g.dart';
 
 class Todo_List = _Todo_List with _$Todo_List;

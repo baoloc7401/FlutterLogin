@@ -5,11 +5,11 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:loginflutter/ui/attendance_screen.dart';
 import 'package:loginflutter/constants/colors.dart';
 import 'package:loginflutter/ui/listviewTodo_screen.dart';
-import 'package:loginflutter/models/loginInfo.dart';
+import 'package:loginflutter/store/login_info.dart';
 import 'package:mobx/mobx.dart';
 
 class HomeScreen extends StatefulWidget {
-  final LoginInfo login_info;
+  final Login_Info login_info;
   const HomeScreen(this.login_info, {Key? key}) : super(key: key);
   @override
   State<HomeScreen> createState() => _HomeScreen();

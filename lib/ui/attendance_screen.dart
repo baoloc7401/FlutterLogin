@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:loginflutter/constants/colors.dart';
-import 'package:loginflutter/models/loginInfo.dart';
+import 'package:loginflutter/store/login_info.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  LoginInfo login_info;
+  Login_Info login_info;
   AttendanceScreen(this.login_info, {Key? key}) : super(key: key);
 
   @override
@@ -30,7 +30,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   IconData iconGO = Icons.pause_circle_outline;
   IconData iconCB = Icons.play_circle_outline;
 
-  void CheckIn() {
+  void checkIn() {
     setState(() {
       text = "have checked in";
       textDecoCI = TextDecoration.underline;
@@ -48,7 +48,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  void CheckOut() {
+  void checkOut() {
     setState(() {
       text = "have checked out";
 
@@ -69,7 +69,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  void GoOut() {
+  void goOut() {
     setState(() {
       textDecoCI = TextDecoration.none;
       textDecoCO = TextDecoration.none;
@@ -88,7 +88,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  void ComeBack() {
+  void comeBack() {
     setState(() {
       text = "have come back";
 
@@ -107,7 +107,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     });
   }
 
-  ButtonStyle BigButtonStyle() {
+  ButtonStyle bigButtonStyle() {
     return ElevatedButton.styleFrom(
       minimumSize: const Size(0, double.infinity),
       elevation: 10,
@@ -117,7 +117,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     );
   }
 
-  TextStyle BigButtonTextStyle() {
+  TextStyle bigButtonTextStyle() {
     return const TextStyle(
       fontWeight: FontWeight.bold,
       color: Colors.blue,
@@ -146,191 +146,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           bottomLeft: Radius.circular(36),
                           bottomRight: Radius.circular(36))),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Column>[
-                    Column(
-                      children: <Widget>[
-                        const Text(
-                          "Attendance Screen",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30),
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15),
-                            children: <TextSpan>[
-                              const TextSpan(
-                                text: 'You ',
-                              ),
-                              TextSpan(
-                                text: text,
-                                style: const TextStyle(
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
-                              const TextSpan(
-                                text: ' xyz minutes ago.',
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                Positioned.fill(
-                  left: 20,
-                  right: 20,
-                  top: 100,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                  onPressed: isButtonCIDisabled
-                                      ? null
-                                      : (() => CheckIn()),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(iconCI,
-                                          size: 100, color: Colors.blue),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "Check In",
-                                              style: TextStyle(
-                                                decoration: textDecoCI,
-                                              ),
-                                            )
-                                          ],
-                                          style: BigButtonTextStyle(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: BigButtonStyle()),
-                            ),
-                            const SizedBox(
-                              width: 25,
-                            ),
-                            Expanded(
-                              child: ElevatedButton(
-                                  onPressed: isButtonCODisabled
-                                      ? null
-                                      : (() => CheckOut()),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        iconCO,
-                                        color: Colors.blue,
-                                        size: 100,
-                                      ),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "Check Out",
-                                              style: TextStyle(
-                                                decoration: textDecoCO,
-                                              ),
-                                            )
-                                          ],
-                                          style: BigButtonTextStyle(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: BigButtonStyle()),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                  onPressed: isButtonGODisabled
-                                      ? null
-                                      : (() => GoOut()),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(iconGO,
-                                          color: Colors.blue, size: 100),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "Go Out",
-                                              style: TextStyle(
-                                                decoration: textDecoGO,
-                                              ),
-                                            )
-                                          ],
-                                          style: BigButtonTextStyle(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: BigButtonStyle()),
-                            ),
-                            const SizedBox(
-                              width: 25,
-                            ),
-                            Expanded(
-                              child: ElevatedButton(
-                                  onPressed: isButtonCBDisabled
-                                      ? null
-                                      : (() => ComeBack()),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(iconCB,
-                                          color: Colors.blue, size: 100),
-                                      RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "Come Back",
-                                              style: TextStyle(
-                                                decoration: textDecoCB,
-                                              ),
-                                            )
-                                          ],
-                                          style: BigButtonTextStyle(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  style: BigButtonStyle()),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
+                titlePaneBuilder(),
+                bigButtonsPaneBuilder()
               ],
             ),
           ),
@@ -338,4 +155,183 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       ),
     );
   }
+
+  Widget titlePaneBuilder() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Column>[
+          Column(
+            children: <Widget>[
+              const Text(
+                "Attendance Screen",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30),
+              ),
+              RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15),
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'You ',
+                    ),
+                    TextSpan(
+                      text: text,
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: ' xyz minutes ago.',
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
+      );
+
+  Widget bigButtonsPaneBuilder() => Positioned.fill(
+        left: 20,
+        right: 20,
+        top: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed:
+                            isButtonCIDisabled ? null : (() => checkIn()),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(iconCI, size: 100, color: Colors.blue),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Check In",
+                                    style: TextStyle(
+                                      decoration: textDecoCI,
+                                    ),
+                                  )
+                                ],
+                                style: bigButtonTextStyle(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: bigButtonStyle()),
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed:
+                            isButtonCODisabled ? null : (() => checkOut()),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              iconCO,
+                              color: Colors.blue,
+                              size: 100,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Check Out",
+                                    style: TextStyle(
+                                      decoration: textDecoCO,
+                                    ),
+                                  )
+                                ],
+                                style: bigButtonTextStyle(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: bigButtonStyle()),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed: isButtonGODisabled ? null : (() => goOut()),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(iconGO, color: Colors.blue, size: 100),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Go Out",
+                                    style: TextStyle(
+                                      decoration: textDecoGO,
+                                    ),
+                                  )
+                                ],
+                                style: bigButtonTextStyle(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: bigButtonStyle()),
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                        onPressed:
+                            isButtonCBDisabled ? null : (() => comeBack()),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(iconCB, color: Colors.blue, size: 100),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Come Back",
+                                    style: TextStyle(
+                                      decoration: textDecoCB,
+                                    ),
+                                  )
+                                ],
+                                style: bigButtonTextStyle(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        style: bigButtonStyle()),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+          ],
+        ),
+      );
 }

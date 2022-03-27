@@ -11,7 +11,7 @@ import 'package:loginflutter/data/queryMutation/login_fetch.dart';
 import 'package:loginflutter/data/storage/secure_storage.dart';
 import 'package:loginflutter/ui/home_screen.dart';
 import 'package:loginflutter/ui/listviewTodo_screen.dart';
-import 'package:loginflutter/models/loginInfo.dart';
+import 'package:loginflutter/models/store/login_info.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:loginflutter/widgets/checkbox_widget.dart';
 
@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
           print(result.exception?.graphqlErrors[0].message);
         }
       } else if (result.data != null) {
-        var loginConfig = LoginInfo.fromJson(result.data!["login"]);
+        var loginConfig = Login_Info.fromJson(result.data!["login"]);
         context.loaderOverlay.hide();
         return Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => HomeScreen(loginConfig)));
@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(color: Colors.blueAccent),
               ),
               content: const Text(
-                  'The username is bbb@bbb.bbb and the password is 12345678.'),
+                  'The username is lll@lll.lll and the password is 12345678.'),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.pop(context, 'OK'),
@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-          userTextController.text = 'bbb@bbb.bbb',
+          userTextController.text = 'lll@lll.lll',
           passTextController.text = '12345678'
         },
         child: const Text(
