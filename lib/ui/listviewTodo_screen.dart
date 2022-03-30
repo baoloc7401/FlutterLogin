@@ -4,12 +4,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:loginflutter/store/todo_list.dart';
-import 'package:loginflutter/store/login_info.dart';
+import 'package:loginflutter/models/login_info_json.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 class listViewTodo_screen extends StatefulWidget {
-  final Login_Info login_info;
+  final Login_Info_Json login_info;
   const listViewTodo_screen(this.login_info, {Key? key}) : super(key: key);
 
   @override

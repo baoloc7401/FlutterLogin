@@ -1,19 +1,21 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:convert';
+import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:loginflutter/data/graphql/graphyql_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:loginflutter/constants/colors.dart';
-import 'package:loginflutter/data/queryMutation/login_fetch.dart';
 import 'package:loginflutter/data/storage/secure_storage.dart';
-import 'package:loginflutter/ui/home_screen.dart';
-import 'package:loginflutter/ui/listviewTodo_screen.dart';
-import 'package:loginflutter/models/store/login_info.dart';
+
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:loginflutter/models/activity_json.dart';
+import 'package:loginflutter/models/login_info_json.dart';
+import 'package:loginflutter/services/activityServices.dart';
+import 'package:loginflutter/services/auth.dart';
+import 'package:loginflutter/store/activity_list.dart';
+import 'package:loginflutter/ui/home_screen.dart';
 import 'package:loginflutter/widgets/checkbox_widget.dart';
+import 'package:mobx/mobx.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -28,6 +30,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final userTextController = TextEditingController();
 
   final passTextController = TextEditingController();
+
+  @observable
+  Activity_List? activity_list;
+
+  Future<bool> checkInternet() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      return (result.isNotEmpty && result[0].rawAddress.isNotEmpty);
+    } on SocketException catch (_) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +78,16 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           } else {
             return Container(
-              color: Colors.white,
+              color: Colors.lightBlue.withOpacity(0.1),
               child: Center(
                   child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
                   SizedBox(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: Colors.blue,
+                    ),
                     width: 60,
                     height: 60,
                   ),
@@ -89,80 +105,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<dynamic> LoginFunc(
-      String email, String password, BuildContext context) async {
-    if (email.isEmpty || password.isEmpty) {
-      return showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text(
-            'Error!',
-            style: TextStyle(color: Colors.redAccent),
-          ),
-          content: const Text('Please fill all required text fields.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    try {
-      ValueNotifier<GraphQLClient> _client = GraphQLConfig.clientToQuery();
-      QueryResult result = await _client.value.mutate(
-        MutationOptions(
-            document: gql(
-              LoginFetch.loginMutation(),
-            ),
-            variables: LoginFetch.loginMutation_variable(email, password)),
-      );
-      if (result.isLoading) {
-        context.loaderOverlay.show();
-      } else if (result.hasException) {
-        context.loaderOverlay.hide();
-        if (kDebugMode) {
-          print(result.exception?.graphqlErrors[0].message);
-        }
-      } else if (result.data != null) {
-        var loginConfig = Login_Info.fromJson(result.data!["login"]);
-        context.loaderOverlay.hide();
-        return Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => HomeScreen(loginConfig)));
-      }
-      context.loaderOverlay.hide();
-      return showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text(
-            'Error!',
-            style: TextStyle(color: Colors.redAccent),
-          ),
-          content: const Text('Wrong email or password! Please try again.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'OK'),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-      return;
-    }
-  }
-
   Widget bodyBuilder(BuildContext context,
       {String email = "", String password = "", bool isChecked = false}) {
     userTextController.text = email;
     passTextController.text = password;
     isChecked = email.isNotEmpty;
     return LoaderOverlay(
+      overlayColor: Colors.blue,
       child: Container(
           constraints: const BoxConstraints.expand(),
           color: Colors.white,
@@ -264,20 +213,53 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget signInButtonBuilder(bool isChecked) => SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: () => {
-            if (isChecked)
-              {
-                secureStorage.writeSecureData("email", userTextController.text),
+          onPressed: () async {
+            context.loaderOverlay.show();
+            if (await checkInternet()) {
+              if (isChecked) {
+                secureStorage.writeSecureData("email", userTextController.text);
                 secureStorage.writeSecureData(
-                    "password", passTextController.text),
+                    "password", passTextController.text);
+              } else {
+                secureStorage.deleteSecureData("email");
+                secureStorage.deleteSecureData("password");
               }
-            else
-              {
-                secureStorage.deleteSecureData("email"),
-                secureStorage.deleteSecureData("password")
-              },
-            LoginFunc(
-                userTextController.text, passTextController.text, context),
+              Login_Info_Json? login_info = await Authorization.LoginFunc(
+                  userTextController.text, passTextController.text, context);
+              if (login_info != null) {
+                activity_list = Activity_List();
+                List<Activity_Json>? activites =
+                    await ActivityServices.GetListActivityFunc(
+                        context,
+                        login_info.token,
+                        login_info.token_type,
+                        "2022-03-27",
+                        DateFormat('yyyy-MM-dd').format(DateTime.now()));
+                activity_list?.initActivities(activites);
+                context.loaderOverlay.hide();
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        HomeScreen(login_info, activity_list)));
+              }
+            } else {
+              context.loaderOverlay.hide();
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: const Text(
+                    'Error!',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  content: const Text('No internet connection!'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, 'OK'),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }
           },
           style: ButtonStyle(
               foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
